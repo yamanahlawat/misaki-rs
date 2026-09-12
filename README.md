@@ -1,5 +1,8 @@
 # Misaki-RS
 
+[![Crates.io](https://img.shields.io/crates/v/misaki-rs)](https://crates.io/crates/misaki-rs)
+
+
 **misaki-rs** is a self-contained, high-performance Rust port of the [Misaki](https://github.com/hexgrad/misaki) G2P (Grapheme-to-Phoneme) engine. 
 
 It is specifically designed for use with TTS models like **Kokoro**, providing accurate Part-of-Speech aware phonemization for English text.
