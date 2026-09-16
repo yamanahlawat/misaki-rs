@@ -1,5 +1,8 @@
 # Misaki-RS
 
+[![Crates.io](https://img.shields.io/crates/v/misaki-rs)](https://crates.io/crates/misaki-rs)
+
+
 **misaki-rs** is a self-contained, high-performance Rust port of the [Misaki](https://github.com/hexgrad/misaki) G2P (Grapheme-to-Phoneme) engine. 
 
 It is specifically designed for use with TTS models like **Kokoro**, providing accurate Part-of-Speech aware phonemization for English text.
@@ -39,20 +42,20 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-misaki-rs = "0.3.0"
+misaki-rs = "0.6.0"
 ```
 
 **Optional: disable espeak fallback** (smaller build, no espeak-ng dependency):
 
 ```toml
 [dependencies]
-misaki-rs = { version = "0.3.0", default-features = false }
+misaki-rs = { version = "0.6.0", default-features = false }
 ```
 
 To depend on misaki-rs without default features but still use espeak:
 
 ```toml
-misaki-rs = { version = "0.3.0", default-features = false, features = ["espeak"] }
+misaki-rs = { version = "0.6.0", default-features = false, features = ["espeak"] }
 ```
 
 ## Quick Start
@@ -73,6 +76,31 @@ fn main() {
     println!("GB Phonemes: {}", phonemes_gb);
 }
 ```
+
+## Custom OOV fallback
+
+If you want to override the default out-of-vocabulary behavior, inject your own fallback implementation by implementing the `Fallback` trait and passing it to `G2P::with_fallback`.
+
+```rust
+use misaki_rs::{Fallback, FallbackError, G2P, Language};
+
+struct CustomFallback;
+
+impl Fallback for CustomFallback {
+    fn phonemize(&self, word: &str) -> Result<String, FallbackError> {
+        // Replace this with your own phoneme generation logic.
+        Ok(format!("custom:{word}"))
+    }
+}
+
+fn main() {
+    let g2p = G2P::with_fallback(Language::EnglishUS, Some(Box::new(CustomFallback)));
+    let (phonemes, _) = g2p.g2p("qzxwv");
+    println!("{}", phonemes);
+}
+```
+
+This is useful when you want a custom pronunciation source, a dictionary lookup, or a second-pass rule engine for unknown words instead of the built-in `espeak` fallback.
 
 ## Pronunciations
 
